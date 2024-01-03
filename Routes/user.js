@@ -10,9 +10,10 @@ UserRoute.post("/", async (req, res) => {
     if (!name) res.status(400).json({ error: "Name must be filled!" });
     let newData = new UserModel({ name, email });
     await newData.save();
-    let token = jwt.sign({ userId: newData._id, todoUser });
+    let token = jwt.sign({ userId: newData._id }, "todoUser");
     res.json({ message: "seccessfully created", data: newData, token });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 });

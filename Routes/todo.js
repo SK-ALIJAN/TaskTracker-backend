@@ -1,13 +1,22 @@
 const express = require("express");
 const { TodoModel } = require("../model/todo");
-
+let jwt = require("jsonwebtoken");
 const TodoRoute = express.Router();
 
 // Get/Read Todo
 TodoRoute.get("/", async (req, res) => {
+  const token = req?.headers?.authorization?.split(" ")[1];
   try {
-    const todos = await TodoModel.find();
-    res.json(todos);
+    if (token) {
+      jwt.verify(token, "todoUser", async (err, decode) => {
+        if (err) res.status(200).json({ message: err.message });
+        else {
+          let { userId } = decode;
+          const todos = await TodoModel.find({ userId });
+          res.json(todos);
+        }
+      });
+    } else res.status(200).json({ message: "please Provided token " });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -16,15 +25,24 @@ TodoRoute.get("/", async (req, res) => {
 // Post/Create New Todo
 TodoRoute.post("/", async (req, res) => {
   const { todo, isComplete } = req.body;
-
-  if (!todo) {
-    return res.status(400).json({ error: "Todo text is required" });
-  }
+  const token = req?.headers?.authorization?.split(" ")[1];
 
   try {
-    const newTodo = new TodoModel({ todo, isComplete: isComplete || false });
-    await newTodo.save();
-    res.status(201).json(newTodo);
+    if (token) {
+      if (!todo) res.status(400).json({ error: "Todo text is required" });
+      jwt.verify(token, "todoUser", async (err, decode) => {
+        if (err) res.status(200).json({ message: err.message });
+        let { userId } = decode;
+        let newObj = {
+          todo,
+          isComplete: isComplete || false,
+          userId,
+        };
+        const newTodo = new TodoModel(newObj);
+        await newTodo.save();
+        res.status(201).json(newTodo);
+      });
+    } else res.status(200).json({ message: "please Provided token " });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

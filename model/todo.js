@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const todoSchema = mongoose.Schema({
   todo: { type: String },
   isComplete: { type: Boolean },
+  userId: { type: String },
 });
 
 const TodoModel = mongoose.model("todo", todoSchema);

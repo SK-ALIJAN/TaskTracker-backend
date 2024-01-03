@@ -20,6 +20,6 @@ app.listen(process.env.PORT, async () => {
     await connection;
     console.log("database connected successfully!");
   } catch (error) {
-    console.log("something went wrong");
+    console.log(error);
   }
 });
