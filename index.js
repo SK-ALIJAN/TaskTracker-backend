@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const { connection } = require("./database");
-const { TodoRoute } = require("./Routes/Todo");
+const { TodoRoute } = require("./Routes/todo");
 const { UserRoute } = require("./Routes/user");
 
 app.use(cors());
