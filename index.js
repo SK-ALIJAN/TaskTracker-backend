@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { connection } = require("./database");
 const { TodoRoute } = require("./Routes/Todo");
+const { UserRoute } = require("./Routes/user");
 
 app.use(cors());
 app.use(express.json());
@@ -11,6 +12,7 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "home page" });
 });
 app.use("/todo", TodoRoute);
+app.use("/user", UserRoute);
 
 app.listen(process.env.PORT, async () => {
   try {
